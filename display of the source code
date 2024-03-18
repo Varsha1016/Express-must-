@@ -1,0 +1,74 @@
+#  Python
+from flask import Flask, render_template, request
+from datetime import datetime
+
+app = Flask(__name__)
+
+# Store submitted entries in a list of dictionaries
+entries = []
+
+@app.route('/')
+def index():
+    return render_template('index.html', entries=entries)
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Extract form data
+    username = request.form['username']
+    language = request.form['language']
+    source_code = request.form['source_code']
+    timestamp = datetime.now()
+
+    # Limit the display of source code to the initial 100 characters
+    source_code_shortened = source_code[:100]
+
+    # Add entry to the list
+    entries.append({'username': username, 'language': language, 'source_code_shortened': source_code_shortened, 'timestamp': timestamp})
+
+    return render_template('index.html', entries=entries)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submitted Entries</title>
+</head>
+<body>
+    <h2>Submitted Entries</h2>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Code Language</th>
+            <th>Source Code (First 100 characters)</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry['username'] }}</td>
+            <td>{{ entry['language'] }}</td>
+            <td>{{ entry['source_code_shortened'] }}</td>
+            <td>{{ entry['timestamp'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
